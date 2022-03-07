@@ -8,3 +8,13 @@ C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life 
 C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.csproj.CoreCompileInputs.cache
 C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.exe
 C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.pdb
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\bin\Debug\Game of Life Project.exe.config
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\bin\Debug\Game of Life Project.exe
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\bin\Debug\Game of Life Project.pdb
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.csproj.AssemblyReference.cache
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game_of_Life_Project.Form1.resources
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game_of_Life_Project.Properties.Resources.resources
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.csproj.GenerateResource.cache
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.csproj.CoreCompileInputs.cache
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.exe
+C:\Users\Patar\Documents\Full Sail Info\COS-I\Game of Life Project\Game of Life Repo\Game of Life Project\Game of Life Project\obj\Debug\Game of Life Project.pdb
