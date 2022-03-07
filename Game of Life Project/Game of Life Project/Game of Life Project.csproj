@@ -82,6 +82,21 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GlyphRight_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LineArrow_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Next_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NextFrameArrow_16x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Pause_16x.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

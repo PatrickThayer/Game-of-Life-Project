@@ -12,8 +12,15 @@ namespace Game_of_Life_Project
 {
     public partial class Form1 : Form
     {
+        static int xArr = 10;
+        static int yArr = 10;
         // The universe array
-        bool[,] universe = new bool[30, 30];
+        bool[,] universe = new bool[xArr, yArr];
+        bool[,] scratchPad = new bool[xArr, yArr];
+
+        //Used to determine which CountNeighbor method to call
+        bool isToroidal = true;
+
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -28,24 +35,156 @@ namespace Game_of_Life_Project
         public Form1()
         {
             InitializeComponent();
-
             // Setup the timer
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
 
+
         // Calculate the next generation of cells
         private void NextGeneration()
         {
+            int livingNeighbors;
 
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    if (isToroidal == true)
+                        livingNeighbors = CountNeighborsTorroidal(x, y);
+                    else
+                        livingNeighbors = CountNeighborsFinite(x, y);
+
+                    if (universe[x,y] == true && livingNeighbors < 2)
+                    {
+                        scratchPad[x, y] = false;
+                    }
+                    else if (universe[x,y] == true && livingNeighbors > 3)
+                    {
+                        scratchPad[x, y] = false;
+                    }
+                    else if (universe[x,y] == true && (livingNeighbors == 2 || livingNeighbors == 3))
+                    {
+                        scratchPad[x, y] = true;
+                    }
+                    else if (universe[x,y] == false && livingNeighbors == 3)
+                    {
+                        scratchPad[x,y] = true;
+                    }
+                }
+            }
 
             // Increment generation count
             generations++;
 
             // Update status strip generations
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+
+            //Swap the arrays
+            SwapArrays();
+
+            //Repaint
+            graphicsPanel1.Invalidate();
         }
+        
+        private void SwapArrays()
+        {
+            bool[,] temp = new bool[xArr, yArr];
+            universe = scratchPad;
+            scratchPad = temp;
+        }
+
+        //Counts the neighbor of each cell
+        //For this method, the borders of the screen represent the end of the simulated world
+        private int CountNeighborsFinite(int x, int y)
+        {
+            int count = 0;
+            int xLen = universe.GetLength(0);
+            int yLen = universe.GetLength(1);
+
+            for (int yOffset = -1; yOffset <= 1; yOffset++)
+            {
+                for (int xOffset = -1; xOffset <=1; xOffset++)
+                {
+                    int xCheck = x + xOffset;
+                    int yCheck = y + yOffset;
+
+                    if (xOffset == 0 && yOffset == 0)
+                    {
+                        continue;
+                    }
+                    if (xCheck < 0)
+                    {
+                        continue;
+                    }
+                    if (yCheck < 0)
+                    {
+                        continue;
+                    }
+                    if (xCheck >= xLen)
+                    {
+                        continue;
+                    }
+                    if (yCheck >= yLen)
+                    {
+                        continue;
+                    }
+                    if (universe[xCheck, yCheck] == true)
+                        count++;
+                }
+            }
+
+            
+            return count;
+        }
+
+        //This method also counts the neighbor of each cell
+        //For this method, the borders of the screen wrap around to simulate an infinite world
+        private int CountNeighborsTorroidal(int x, int y)
+        {
+            int count = 0;
+            int xLen = universe.GetLength(0);
+            int yLen = universe.GetLength(1);
+
+            for (int yOffset = -1; yOffset <= 1; yOffset++)
+            {
+                for (int xOffset = -1; xOffset <= 1; xOffset++)
+                {
+                    int xCheck = x + xOffset;
+                    int yCheck = y + yOffset;
+
+                    if (xOffset == 0 && yOffset == 0)
+                    {
+                        continue;
+                    }
+                    if (xCheck < 0)
+                    {
+                        xCheck = xLen - 1;
+                    }
+                    if (yCheck < 0)
+                    {
+                        yCheck = yLen - 1;
+                    }
+                    if (xCheck >= xLen)
+                    {
+                        xCheck = 0;
+                    }
+                    if (yCheck >= yLen)
+                    {
+                        yCheck = 0;
+                    }
+                    
+                    if (universe[xCheck, yCheck] == true)
+                        count++;
+                }
+            }
+
+
+            return count;
+        }
+
+
 
         // The event called by the timer every Interval milliseconds.
         private void Timer_Tick(object sender, EventArgs e)
@@ -122,52 +261,6 @@ namespace Game_of_Life_Project
             }
         }
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                // Iterate through the universe in the x, left to right
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    universe[x, y] = false;
-                }
-
-            }
-            timer.Enabled = false;
-            generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-            graphicsPanel1.Invalidate();
-        }
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void printToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void printPreviewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
         //Play
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -184,6 +277,78 @@ namespace Game_of_Life_Project
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             NextGeneration();
+        }
+
+        //Resets the grid back to new
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                // Iterate through the universe in the x, left to right
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    universe[x, y] = false;
+                }
+
+            }
+            timer.Enabled = false;
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            graphicsPanel1.Invalidate();
+        }
+
+        //Used to open a cell file - unfinished
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //used to import a cell file - unfinished
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Saves current grid as a cell file - unfinished
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Exits the application
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        //Toggles HUD - unfinished
+        private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Toggles NeighborCount numbers - unfinished
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Toggles Grid lines - unfinished
+        private void gridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Sets grid to toroidal
+        private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isToroidal = true;
+        }
+
+        //Sets grid to finite
+        private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isToroidal = false;
         }
     }
 }
