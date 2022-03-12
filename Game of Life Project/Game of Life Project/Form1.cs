@@ -12,8 +12,8 @@ namespace Game_of_Life_Project
 {
     public partial class Form1 : Form
     {
-        static int xArr = 10;
-        static int yArr = 10;
+        static int xArr = 7;
+        static int yArr = 7;
         // The universe array
         bool[,] universe = new bool[xArr, yArr];
         bool[,] scratchPad = new bool[xArr, yArr];
@@ -261,6 +261,13 @@ namespace Game_of_Life_Project
             }
         }
 
+        /* Tool Strip functions - done
+         * 
+         * Play
+         * Pause
+         * Next
+         */
+
         //Play
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -273,11 +280,20 @@ namespace Game_of_Life_Project
             timer.Enabled = false;
         }
 
-        //Increment One
+        //Next - Increments by one generation
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             NextGeneration();
         }
+
+        /* File Menu Functions - in progress
+         * 
+         * New - done
+         * Open - todo
+         * Import - todo
+         * Save - todo
+         * Exit -done
+         */
 
         //Resets the grid back to new
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -320,6 +336,16 @@ namespace Game_of_Life_Project
         {
             this.Close();
         }
+
+        /* View Menu Functions - in progress
+         * 
+         * HUD - todo
+         * NeighborCount - todo
+         * Grid - todo
+         * 
+         * Toroidal - done
+         * Finite - done
+         */
 
         //Toggles HUD - unfinished
         private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
