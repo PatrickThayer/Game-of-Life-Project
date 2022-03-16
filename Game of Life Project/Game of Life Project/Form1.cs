@@ -376,5 +376,21 @@ namespace Game_of_Life_Project
         {
             isToroidal = false;
         }
+
+        /* Settings Menu Functions - in progress
+         * 
+         * Options - todo
+         * 
+         * 
+         * 
+         * 
+         */
+
+        private void optionsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Form2 form2 = new Form2();
+
+            form2.ShowDialog();
+        }
     }
 }
