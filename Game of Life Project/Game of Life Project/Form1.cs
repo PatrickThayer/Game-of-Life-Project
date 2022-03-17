@@ -534,19 +534,23 @@ namespace Game_of_Life_Project
 
             if (DialogResult.OK == form2.ShowDialog())
             {
+                if (xArr != form2.NumericUpDown_2 || yArr != form2.NumericUpDown_3)
+                {
+                    xArr = form2.NumericUpDown_2;
+                    yArr = form2.NumericUpDown_3;
+
+                    universe = new bool[xArr, yArr];
+                    scratchPad = new bool[xArr, yArr];
+
+                    graphicsPanel1.Invalidate();
+
+                    pauseToolStripMenuItem_Click(sender, e);
+                }
 
                 milliseconds = form2.NumericUpDown_1;
-                xArr = form2.NumericUpDown_2;
-                yArr = form2.NumericUpDown_3;
-
-                universe = new bool[xArr, yArr];
-                scratchPad = new bool[xArr, yArr];
                 timer.Interval = milliseconds;
-                graphicsPanel1.Invalidate();
 
             }
-            graphicsPanel1.Invalidate();
-
         }
 
         // Returns the application to its default settings
