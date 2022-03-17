@@ -7,27 +7,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Game_of_Life_Project.Form2;
 
 namespace Game_of_Life_Project
 {
     public partial class Form1 : Form
     {
-        static int xArr = 7;
-        static int yArr = 7;
+        static int xArr = 25;
+        static int yArr = 25;
+        static int milliseconds = 100;
         // The universe array
-        bool[,] universe = new bool[xArr, yArr];
-        bool[,] scratchPad = new bool[xArr, yArr];
+        static bool[,] universe = new bool[xArr, yArr];
+        static bool[,] scratchPad = new bool[xArr, yArr];
 
         //Used to determine which CountNeighbor method to call
         bool isToroidal = true;
+        bool displayGrid = true;
 
 
         // Drawing colors
         Color gridColor = Color.Black;
+        Color gridColor_x10 = Color.Black;
         Color cellColor = Color.Gray;
 
         // The Timer class
-        Timer timer = new Timer();
+        static Timer timer = new Timer();
 
         // Generation count
         int generations = 0;
@@ -36,7 +40,7 @@ namespace Game_of_Life_Project
         {
             InitializeComponent();
             // Setup the timer
-            timer.Interval = 100; // milliseconds
+            timer.Interval = milliseconds; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
@@ -192,6 +196,8 @@ namespace Game_of_Life_Project
             NextGeneration();
         }
 
+
+
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
             // Make into floats
@@ -203,6 +209,9 @@ namespace Game_of_Life_Project
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
+
+            // A Pen for drawing thicker grid lines every 10 cells (color, width)
+            Pen gridPen_x10 = new Pen(gridColor_x10, 3);
 
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
@@ -228,7 +237,11 @@ namespace Game_of_Life_Project
                     }
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    if (displayGrid)
+                        e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+
+                    //if ( x % 10 == 0 && y % 10 == 0)
+                    //    e.Graphics.DrawRectangle(gridPen_x10, x, y, cellRect.Width * 10, cellRect.Height * 10);
                 }
             }
 
@@ -261,37 +274,59 @@ namespace Game_of_Life_Project
             }
         }
 
-        /* Tool Strip functions - done
+        /* Tool Strip functions
          * 
-         * Play
-         * Pause
-         * Next
+         * New - done
+         * Open - todo
+         * Save - todo
+         * 
+         * Play - done
+         * Pause - done
+         * Next - done
          */
 
-        //Play
+        //Resets the grid back to new
+        private void newToolStripButton_Click(object sender, EventArgs e)
+        {
+            newToolStripMenuItem_Click(sender, e);
+        }
+
+        //Used to open a cell file - unfinished
+        private void openToolStripButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Saves current grid as a cell file - unfinished
+        private void saveToolStripButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Plays the simulation
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            timer.Enabled = true;
+            startToolStripMenuItem_Click(sender, e);
         }
 
-        //Pause
+        // Pauses the simulation
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            timer.Enabled = false;
+            pauseToolStripMenuItem_Click(sender, e);
         }
 
-        //Next - Increments by one generation
+        // Advances the simulation to the next generation
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            NextGeneration();
+            nextToolStripMenuItem_Click(sender, e);
         }
 
         /* File Menu Functions - in progress
          * 
          * New - done
-         * Open - todo
+         * Open - done
          * Import - todo
-         * Save - todo
+         * Save - done
          * Exit -done
          */
 
@@ -313,10 +348,10 @@ namespace Game_of_Life_Project
             graphicsPanel1.Invalidate();
         }
 
-        //Used to open a cell file - unfinished
+        //Used to open a cell file
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            openToolStripButton_Click(sender, e);
         }
 
         //used to import a cell file - unfinished
@@ -325,10 +360,10 @@ namespace Game_of_Life_Project
 
         }
 
-        //Saves current grid as a cell file - unfinished
+        //Saves current grid as a cell file
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            saveToolStripButton_Click(sender, e);
         }
 
         //Exits the application
@@ -341,7 +376,7 @@ namespace Game_of_Life_Project
          * 
          * HUD - todo
          * NeighborCount - todo
-         * Grid - todo
+         * Grid - done
          * 
          * Toroidal - done
          * Finite - done
@@ -359,10 +394,15 @@ namespace Game_of_Life_Project
 
         }
 
-        //Toggles Grid lines - unfinished
+        //Toggles Grid lines
         private void gridToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (displayGrid)
+                displayGrid = false;
+            else
+                displayGrid = true;
 
+            graphicsPanel1.Invalidate();
         }
 
         //Sets grid to toroidal
@@ -377,20 +417,196 @@ namespace Game_of_Life_Project
             isToroidal = false;
         }
 
-        /* Settings Menu Functions - in progress
+
+        /* Run Functions - in progress
          * 
-         * Options - todo
-         * 
-         * 
-         * 
+         * Play - done
+         * Pause - done
+         * Next - done
+         * To - todo
          * 
          */
 
+        // Plays the simulation
+        private void startToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+        }
+
+        // Pauses the simulation
+        private void pauseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+        }
+
+        // Advances the simulation to the next generation
+        private void nextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NextGeneration();
+        }
+
+
+        // Advances the simulation to a specific generation
+        private void toToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+        /* Randomize Functions - in progress
+         * 
+         * From Seed - todo
+         * From Current Seed - todo
+         * From Time - todo
+         * 
+         */
+
+        /* Settings Menu Functions - in progress
+         * 
+         * Background Color - done
+         * Cell Color - done
+         * Grid Color - done
+         * Grid x10 Color - todo
+         * 
+         * Options - done
+         * 
+         * Reset - todo
+         * Reload - todo
+         * 
+         */
+
+        // Set Background Color
+        private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = graphicsPanel1.BackColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                graphicsPanel1.BackColor = dlg.Color;
+            }
+
+            graphicsPanel1.Invalidate();
+
+        }
+
+        // Set cell color
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = cellColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                cellColor = dlg.Color;
+            }
+
+            graphicsPanel1.Invalidate();
+        }
+
+        // Set grid color
+        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog dlg = new ColorDialog();
+
+            dlg.Color = gridColor;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                gridColor = dlg.Color;
+            }
+
+            graphicsPanel1.Invalidate();
+        }
+
+        //Set a separate color for every 10x10 section of the grid
+        private void gridX10ColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Opens modal dialog box to allow user to adjust the height and width of grid as well as the interval between generations
         private void optionsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Form2 form2 = new Form2();
+            Form2 form2 = new Form2(milliseconds, xArr, yArr);
 
-            form2.ShowDialog();
+            if (DialogResult.OK == form2.ShowDialog())
+            {
+
+                milliseconds = form2.NumericUpDown_1;
+                xArr = form2.NumericUpDown_2;
+                yArr = form2.NumericUpDown_3;
+
+                universe = new bool[xArr, yArr];
+                scratchPad = new bool[xArr, yArr];
+                timer.Interval = milliseconds;
+                graphicsPanel1.Invalidate();
+
+            }
+            graphicsPanel1.Invalidate();
+
+        }
+
+        // Returns the application to its default settings
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Revert application to last saved settings
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /* Context Menu Functions - finished
+         * 
+         *  Set Background Color - done
+         *  Set Cell Color - done
+         *  Set Grid Color - done
+         *  Set Girdx10 Color - done
+         * 
+         */
+
+        // Set Background Color
+        private void backColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            backColorToolStripMenuItem_Click(sender, e);
+        }
+
+        // Set cell color
+        private void cellColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            cellColorToolStripMenuItem_Click(sender, e);
+        }
+
+        // Set grid color
+        private void gridColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            gridColorToolStripMenuItem_Click(sender, e);
+        }
+
+        //Set a separate color for every 10x10 section of the grid
+        private void gridX10ColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            gridX10ColorToolStripMenuItem_Click(sender, e);
+        }
+
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fromCurrentTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
