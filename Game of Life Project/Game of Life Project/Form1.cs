@@ -13,15 +13,23 @@ namespace Game_of_Life_Project
 {
     public partial class Form1 : Form
     {
+        // Used to adjust the width (xArr) and height (yArr) of the array
         static int xArr = 25;
         static int yArr = 25;
+
+        // Used to adjust the speed at which NextGeneration is called
         static int milliseconds = 100;
+
         // The universe array
         static bool[,] universe = new bool[xArr, yArr];
+
+        // The scratchPad array
         static bool[,] scratchPad = new bool[xArr, yArr];
 
-        //Used to determine which CountNeighbor method to call
+        // Used to determine which CountNeighbor method to call
         bool isToroidal = true;
+
+        // Used to toggle the grid display on and off
         bool displayGrid = true;
 
 
@@ -92,6 +100,7 @@ namespace Game_of_Life_Project
             graphicsPanel1.Invalidate();
         }
         
+        // Swap arrays to iterate through generations accurately
         private void SwapArrays()
         {
             bool[,] temp = new bool[xArr, yArr];
@@ -236,12 +245,16 @@ namespace Game_of_Life_Project
                         e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
 
-                    // Outline the cell with a pen
+                    // displayGrid is true, paint the grid to the screen
                     if (displayGrid)
+                    {
+                        // Outline the cell with a pen
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
 
-                    //if ( x % 10 == 0 && y % 10 == 0)
-                    //    e.Graphics.DrawRectangle(gridPen_x10, x, y, cellRect.Width * 10, cellRect.Height * 10);
+                        // Outline 10x10 cell with a thicker pen
+                        if (x % 10 == 0 && y % 10 == 0)
+                            e.Graphics.DrawRectangle(gridPen_x10, cellRect.X, cellRect.Y, cellRect.Width * 10, cellRect.Height * 10);
+                    }
                 }
             }
 
@@ -255,7 +268,6 @@ namespace Game_of_Life_Project
             // If the left mouse button was clicked
             if (e.Button == MouseButtons.Left)
             {
-                // Floats
                 // Calculate the width and height of each cell in pixels
                 float cellWidth = (float)graphicsPanel1.ClientSize.Width / (float)universe.GetLength(0);
                 float cellHeight = (float)graphicsPanel1.ClientSize.Height / (float)universe.GetLength(1);
@@ -325,7 +337,7 @@ namespace Game_of_Life_Project
          * 
          * New - done
          * Open - done
-         * Import - todo
+         * Import - Not required for implementation
          * Save - done
          * Exit -done
          */
@@ -461,6 +473,21 @@ namespace Game_of_Life_Project
          * 
          */
 
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fromCurrentTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         /* Settings Menu Functions - in progress
          * 
          * Background Color - done
@@ -524,7 +551,14 @@ namespace Game_of_Life_Project
         //Set a separate color for every 10x10 section of the grid
         private void gridX10ColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ColorDialog dlg = new ColorDialog();
 
+            dlg.Color = gridColor_x10;
+
+            if (DialogResult.OK == dlg.ShowDialog())
+                gridColor_x10 = dlg.Color;
+
+            graphicsPanel1.Invalidate();
         }
 
         // Opens modal dialog box to allow user to adjust the height and width of grid as well as the interval between generations
@@ -567,11 +601,17 @@ namespace Game_of_Life_Project
 
         /* Context Menu Functions - finished
          * 
+         *  --- Color ---
          *  Set Background Color - done
          *  Set Cell Color - done
          *  Set Grid Color - done
          *  Set Girdx10 Color - done
          * 
+         *  -- View ---
+         *  HUD - todo
+         *  Neighbor Count - todo
+         *  Grid - done
+         *  
          */
 
         // Set Background Color
@@ -598,19 +638,22 @@ namespace Game_of_Life_Project
             gridX10ColorToolStripMenuItem_Click(sender, e);
         }
 
-        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        // Toggles HUD
+        private void hUDToolStripMenuItem1_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void fromCurrentTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        // Toggles Neighbor Count Numbers
+        private void neighborCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        // Toggles grid lines
+        private void gridToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            gridToolStripMenuItem_Click(sender, e);
         }
     }
 }
