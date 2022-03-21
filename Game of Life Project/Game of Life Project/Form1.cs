@@ -14,17 +14,17 @@ namespace Game_of_Life_Project
     public partial class Form1 : Form
     {
         // Used to adjust the width (xArr) and height (yArr) of the array
-        static int xArr = 25;
-        static int yArr = 25;
+        static int xArr;
+        static int yArr;
 
         // Used to adjust the speed at which NextGeneration is called
-        static int milliseconds = 100;
+        static int milliseconds;
 
         // The universe array
-        static bool[,] universe = new bool[xArr, yArr];
+        static bool[,] universe;
 
         // The scratchPad array
-        static bool[,] scratchPad = new bool[xArr, yArr];
+        static bool[,] scratchPad;
 
         // Used to determine which CountNeighbor method to call
         bool isToroidal = true;
@@ -47,10 +47,37 @@ namespace Game_of_Life_Project
         public Form1()
         {
             InitializeComponent();
+
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            gridColor = Properties.Settings.Default.GridColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor_x10 = Properties.Settings.Default.GridColor_x10;
+
+            milliseconds = Properties.Settings.Default.Milliseconds;
+            xArr = Properties.Settings.Default.ArrLen_X;
+            yArr = Properties.Settings.Default.ArrLen_Y;
+            universe = new bool[xArr, yArr];
+            scratchPad = new bool[xArr, yArr];
+
             // Setup the timer
             timer.Interval = milliseconds; // milliseconds
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
+        }
+
+        // Updates Settings properties on close so that settings persist between sessions
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Properties.Settings.Default.BackColor = graphicsPanel1.BackColor;
+            Properties.Settings.Default.GridColor = gridColor;
+            Properties.Settings.Default.CellColor = cellColor;
+            Properties.Settings.Default.GridColor_x10 = gridColor_x10;
+
+            Properties.Settings.Default.Milliseconds = milliseconds;
+            Properties.Settings.Default.ArrLen_X = xArr;
+            Properties.Settings.Default.ArrLen_Y = yArr;
+
+            Properties.Settings.Default.Save();
         }
 
 
@@ -250,7 +277,7 @@ namespace Game_of_Life_Project
                     {
                         // Outline the cell with a pen
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
-
+                        
                         // Outline 10x10 cell with a thicker pen
                         if (x % 10 == 0 && y % 10 == 0)
                             e.Graphics.DrawRectangle(gridPen_x10, cellRect.X, cellRect.Y, cellRect.Width * 10, cellRect.Height * 10);
@@ -514,8 +541,6 @@ namespace Game_of_Life_Project
                 graphicsPanel1.BackColor = dlg.Color;
             }
 
-            graphicsPanel1.Invalidate();
-
         }
 
         // Set cell color
@@ -588,15 +613,41 @@ namespace Game_of_Life_Project
         }
 
         // Returns the application to its default settings
+        // Affects Color of grid, grid_x10, cells, and background, and also affects grid size and milliseconds
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.Reset();
 
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            gridColor = Properties.Settings.Default.GridColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor_x10 = Properties.Settings.Default.GridColor_x10;
+
+            milliseconds = Properties.Settings.Default.Milliseconds;
+            xArr = Properties.Settings.Default.ArrLen_X;
+            yArr = Properties.Settings.Default.ArrLen_Y;
+            universe = new bool[xArr, yArr];
+            scratchPad = new bool[xArr, yArr];
+
+            graphicsPanel1.Invalidate();
         }
 
         // Revert application to last saved settings
+        // As with reset, affects Color of grid, grid_x10, cells, and background, and also affects grid size and milliseconds
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.Reload();
 
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
+            gridColor = Properties.Settings.Default.GridColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor_x10 = Properties.Settings.Default.GridColor_x10;
+
+            milliseconds = Properties.Settings.Default.Milliseconds;
+            xArr = Properties.Settings.Default.ArrLen_X;
+            yArr = Properties.Settings.Default.ArrLen_Y;
+
+            graphicsPanel1.Invalidate();
         }
 
         /* Context Menu Functions - finished
@@ -608,8 +659,8 @@ namespace Game_of_Life_Project
          *  Set Girdx10 Color - done
          * 
          *  -- View ---
-         *  HUD - todo
-         *  Neighbor Count - todo
+         *  HUD - done
+         *  Neighbor Count - done
          *  Grid - done
          *  
          */
@@ -641,13 +692,13 @@ namespace Game_of_Life_Project
         // Toggles HUD
         private void hUDToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
+            customizeToolStripMenuItem_Click(sender, e);
         }
 
         // Toggles Neighbor Count Numbers
         private void neighborCountToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            optionsToolStripMenuItem_Click(sender, e);
         }
 
         // Toggles grid lines
@@ -655,5 +706,6 @@ namespace Game_of_Life_Project
         {
             gridToolStripMenuItem_Click(sender, e);
         }
+
     }
 }
