@@ -275,8 +275,32 @@ namespace Game_of_Life_Project
                     // displayGrid is true, paint the grid to the screen
                     if (displayGrid)
                     {
+                        // Used to write the number of neighbors into each cell
+                        Font font = new Font("Arial", 8f);
+                        StringFormat stringFormat = new StringFormat();
+                        stringFormat.Alignment = StringAlignment.Center;
+                        stringFormat.LineAlignment = StringAlignment.Center;
+
+
+                        // Determine which number to write to the cell
+                        int neighbors;
+                        
+                        if (isToroidal)
+                            neighbors = CountNeighborsTorroidal((int)x, (int)y);
+                        else
+                            neighbors = CountNeighborsFinite((int)x, (int)y);
+
                         // Outline the cell with a pen
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+
+                        // Write in the neighbor count
+                        if (neighbors != 0)
+                        {
+                            if (neighbors == 3 || (neighbors == 2 && universe[(int)x, (int)y] == true))
+                                e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRect, stringFormat);
+                            else
+                            e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRect, stringFormat);
+                        }             
                         
                         // Outline 10x10 cell with a thicker pen
                         if (x % 10 == 0 && y % 10 == 0)
