@@ -32,6 +32,9 @@ namespace Game_of_Life_Project
         // Used to toggle the grid display on and off
         bool displayGrid = true;
 
+        // Used to toggle the neighbor count display on and off
+        bool displayNeighborCount = true;
+
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -44,10 +47,12 @@ namespace Game_of_Life_Project
         // Generation count
         int generations = 0;
 
+        // Class Constructor
         public Form1()
         {
             InitializeComponent();
 
+            // Update application to display persistent settings
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             gridColor = Properties.Settings.Default.GridColor;
             cellColor = Properties.Settings.Default.CellColor;
@@ -272,7 +277,7 @@ namespace Game_of_Life_Project
                         e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
 
-                    // displayGrid is true, paint the grid to the screen
+                    // if displayGrid is true, paint the grid to the screen
                     if (displayGrid)
                     {
                         // Used to write the number of neighbors into each cell
@@ -293,15 +298,19 @@ namespace Game_of_Life_Project
                         // Outline the cell with a pen
                         e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
 
-                        // Write in the neighbor count
-                        if (neighbors != 0)
+                        // if displayNeighborCount is true, write number of living neighbors in each cell
+                        if (displayNeighborCount)
                         {
-                            if (neighbors == 3 || (neighbors == 2 && universe[(int)x, (int)y] == true))
-                                e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRect, stringFormat);
-                            else
-                            e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRect, stringFormat);
-                        }             
-                        
+                            // Write in the neighbor count
+                            if (neighbors != 0)
+                            {
+                                if (neighbors == 3 || (neighbors == 2 && universe[(int)x, (int)y] == true))
+                                    e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRect, stringFormat);
+                                else
+                                    e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRect, stringFormat);
+                            }
+                        }
+
                         // Outline 10x10 cell with a thicker pen
                         if (x % 10 == 0 && y % 10 == 0)
                             e.Graphics.DrawRectangle(gridPen_x10, cellRect.X, cellRect.Y, cellRect.Width * 10, cellRect.Height * 10);
@@ -454,7 +463,12 @@ namespace Game_of_Life_Project
         //Toggles NeighborCount numbers - unfinished
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!displayNeighborCount)
+                displayNeighborCount = true;
+            else
+                displayNeighborCount = false;
 
+            graphicsPanel1.Invalidate();
         }
 
         //Toggles Grid lines
