@@ -123,7 +123,7 @@ namespace Game_of_Life_Project
             generations++;
 
             // Update status strip generations
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations.ToString();
 
             //Swap the arrays
             SwapArrays();
@@ -247,6 +247,8 @@ namespace Game_of_Life_Project
             float cellWidth = (float)graphicsPanel1.ClientSize.Width / (float) universe.GetLength(0);
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
             float cellHeight = (float)graphicsPanel1.ClientSize.Height / (float) universe.GetLength(1);
+            // Counts the number of living cells
+            int livingCells = 0;
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
@@ -275,6 +277,8 @@ namespace Game_of_Life_Project
                     if (universe[(int)x, (int)y] == true)
                     {
                         e.Graphics.FillRectangle(cellBrush, cellRect);
+                        livingCells++;
+                        toolStripStatusLabelAlive.Text = "Alive: " + livingCells;
                     }
 
                     // if displayGrid is true, paint the grid to the screen
@@ -416,7 +420,8 @@ namespace Game_of_Life_Project
             }
             timer.Enabled = false;
             generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations.ToString();
+            toolStripStatusLabelAlive.Text = "Alive: 0";
             graphicsPanel1.Invalidate();
         }
 
@@ -460,7 +465,7 @@ namespace Game_of_Life_Project
 
         }
 
-        //Toggles NeighborCount numbers - unfinished
+        //Toggles NeighborCount numbers
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (!displayNeighborCount)
@@ -611,7 +616,7 @@ namespace Game_of_Life_Project
             graphicsPanel1.Invalidate();
         }
 
-        //Set a separate color for every 10x10 section of the grid
+        //Set a separate color for every 10x10 section of the grid - unfinished
         private void gridX10ColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ColorDialog dlg = new ColorDialog();
@@ -646,6 +651,9 @@ namespace Game_of_Life_Project
 
                 milliseconds = form2.NumericUpDown_1;
                 timer.Interval = milliseconds;
+
+                // Update status strip intervals
+                toolStripStatusLabelInterval.Text = "Interval: " + milliseconds.ToString();
 
             }
         }
