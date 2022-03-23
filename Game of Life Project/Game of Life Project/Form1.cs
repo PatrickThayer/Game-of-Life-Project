@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -460,10 +461,59 @@ namespace Game_of_Life_Project
             graphicsPanel1.Invalidate();
         }
 
-        //Used to open a cell file - unfinished
+        //Used to open a cell file
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "All Files|*.*|Cells|*.cells";
+            dlg.FilterIndex = 2;
 
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                StreamReader sr = new StreamReader(dlg.FileName);
+
+                int maxWidth = 0;
+                int maxHeight = 0;
+
+                while (!sr.EndOfStream)
+                {
+                    string row = sr.ReadLine();
+
+                    if (!row.StartsWith("!"))
+                    {
+                        maxHeight++;
+                        maxWidth = row.Length;
+                    }
+                }
+
+                universe = new bool[maxWidth, maxHeight];
+                scratchPad = new bool[maxWidth, maxHeight];
+
+                sr.BaseStream.Seek(0, SeekOrigin.Begin);
+
+                int yAxis = 0;
+
+                while (!sr.EndOfStream)
+                {
+                    string row = sr.ReadLine();
+
+                    if (!row.StartsWith("!"))
+                    {
+                        for (int xPos = 0; xPos < row.Length; xPos++)
+                        {
+                            if (row[xPos] == 'O')
+                                universe[xPos, yAxis] = true;
+                            else
+                                universe[xPos, yAxis] = false;
+                        }
+                        yAxis++;
+                    }
+                }
+
+                sr.Close();
+
+                graphicsPanel1.Invalidate();
+            }
         }
 
         //used to import a cell file - unfinished
@@ -475,7 +525,33 @@ namespace Game_of_Life_Project
         //Saves current grid as a cell file - unfinished
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "All files |*.*|Cells|*.cells";
+            dlg.FilterIndex = 2;
+            dlg.DefaultExt = "cells";
+
+            if (DialogResult.OK == dlg.ShowDialog())
+            {
+                StreamWriter sw = new StreamWriter(dlg.FileName);
+
+                string timeStamp = DateTime.Now.ToString();
+
+                sw.WriteLine("!" + timeStamp);
+
+                for (int y = 0; y < universe.GetLength(1); y++)
+                {
+                    string currentLine = String.Empty;
+                    for (int x = 0; x < universe.GetLength(0); x++)
+                    {
+                        if (universe[x, y] == true)
+                            currentLine += "O";
+                        else
+                            currentLine += ".";
+                    }
+                    sw.WriteLine(currentLine);
+                }
+                sw.Close();
+            }
         }
 
         //Exits the application
