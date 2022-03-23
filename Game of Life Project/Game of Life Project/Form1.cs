@@ -20,6 +20,12 @@ namespace Game_of_Life_Project
         // Used to adjust the speed at which NextGeneration is called
         static int milliseconds;
 
+        // Counts the number of living cells
+        static int livingCells;
+
+        // The random seed of the universe 
+        static int seed;
+
         // The universe array
         static bool[,] universe;
 
@@ -58,11 +64,17 @@ namespace Game_of_Life_Project
             cellColor = Properties.Settings.Default.CellColor;
             gridColor_x10 = Properties.Settings.Default.GridColor_x10;
 
+            seed = Properties.Settings.Default.RandSeed;
             milliseconds = Properties.Settings.Default.Milliseconds;
             xArr = Properties.Settings.Default.ArrLen_X;
             yArr = Properties.Settings.Default.ArrLen_Y;
             universe = new bool[xArr, yArr];
             scratchPad = new bool[xArr, yArr];
+
+            // Update the status strip with value of persistent settings
+            toolStripStatusLabelInterval.Text = "Interval: " + milliseconds;
+            toolStripStatusLabelSeed.Text = "Seed: " + seed;
+
 
             // Setup the timer
             timer.Interval = milliseconds; // milliseconds
@@ -78,6 +90,7 @@ namespace Game_of_Life_Project
             Properties.Settings.Default.CellColor = cellColor;
             Properties.Settings.Default.GridColor_x10 = gridColor_x10;
 
+            Properties.Settings.Default.RandSeed = seed;
             Properties.Settings.Default.Milliseconds = milliseconds;
             Properties.Settings.Default.ArrLen_X = xArr;
             Properties.Settings.Default.ArrLen_Y = yArr;
@@ -247,8 +260,6 @@ namespace Game_of_Life_Project
             float cellWidth = (float)graphicsPanel1.ClientSize.Width / (float) universe.GetLength(0);
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
             float cellHeight = (float)graphicsPanel1.ClientSize.Height / (float) universe.GetLength(1);
-            // Counts the number of living cells
-            int livingCells = 0;
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
@@ -258,6 +269,9 @@ namespace Game_of_Life_Project
 
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
+
+            // reset livingCells so that dead cells do not persist into consecutive paints
+            livingCells = 0;
 
             // Iterate through the universe in the y, top to bottom
             for (float y = 0; y < universe.GetLength(1); y++)
@@ -272,6 +286,7 @@ namespace Game_of_Life_Project
                     cellRect.Y = y * cellHeight;
                     cellRect.Width = cellWidth;
                     cellRect.Height = cellHeight;
+
 
                     // Fill the cell with a brush if alive
                     if (universe[(int)x, (int)y] == true)
@@ -350,11 +365,11 @@ namespace Game_of_Life_Project
             }
         }
 
-        /* Tool Strip functions
+        /* Tool Strip functions - finished
          * 
          * New - done
-         * Open - todo
-         * Save - todo
+         * Open - done
+         * Save - done
          * 
          * Play - done
          * Pause - done
@@ -367,16 +382,16 @@ namespace Game_of_Life_Project
             newToolStripMenuItem_Click(sender, e);
         }
 
-        //Used to open a cell file - unfinished
+        //Used to open a cell file
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
-
+            openToolStripMenuItem_Click(sender, e);
         }
 
-        //Saves current grid as a cell file - unfinished
+        //Saves current grid as a cell file
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
-
+            saveToolStripMenuItem_Click(sender, e);
         }
 
         // Plays the simulation
@@ -400,9 +415,9 @@ namespace Game_of_Life_Project
         /* File Menu Functions - in progress
          * 
          * New - done
-         * Open - done
+         * Open - todo
          * Import - Not required for implementation
-         * Save - done
+         * Save - todo
          * Exit -done
          */
 
@@ -425,10 +440,10 @@ namespace Game_of_Life_Project
             graphicsPanel1.Invalidate();
         }
 
-        //Used to open a cell file
+        //Used to open a cell file - unfinished
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openToolStripButton_Click(sender, e);
+
         }
 
         //used to import a cell file - unfinished
@@ -437,10 +452,10 @@ namespace Game_of_Life_Project
 
         }
 
-        //Saves current grid as a cell file
+        //Saves current grid as a cell file - unfinished
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveToolStripButton_Click(sender, e);
+            
         }
 
         //Exits the application
@@ -452,7 +467,7 @@ namespace Game_of_Life_Project
         /* View Menu Functions - in progress
          * 
          * HUD - todo
-         * NeighborCount - todo
+         * NeighborCount - done
          * Grid - done
          * 
          * Toroidal - done
@@ -491,12 +506,14 @@ namespace Game_of_Life_Project
         private void toroidalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             isToroidal = true;
+            graphicsPanel1.Invalidate();
         }
 
         //Sets grid to finite
         private void finiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             isToroidal = false;
+            graphicsPanel1.Invalidate();
         }
 
 
@@ -528,7 +545,7 @@ namespace Game_of_Life_Project
         }
 
 
-        // Advances the simulation to a specific generation
+        // Advances the simulation to a specific generation - unifinished
         private void toToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -543,19 +560,79 @@ namespace Game_of_Life_Project
          * 
          */
 
+        // Choose the seed by which to randomize the universe 
         private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ChooseSeedForm csf = new ChooseSeedForm(seed);
 
+            if (DialogResult.OK == csf.ShowDialog())
+            {
+                seed = csf.NumericUpDown_1;
+                toolStripStatusLabelSeed.Text = "Seed: " + seed;
+            }
+
+            Random rand = new Random(seed);
+
+            for (int x = 0; x < universe.GetLength(1); x++)
+            {
+                for (int y = 0; y < universe.GetLength(0); y++)
+                {
+                    int num = rand.Next(0, 3);
+
+                    if (num == 0)
+                        universe[x, y] = true;
+                    else
+                        universe[x, y] = false;
+                }
+            }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations;
+            graphicsPanel1.Invalidate();
         }
 
-        private void fromCurrentTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        // Randomize the universe based on the current seed
+        private void fromCurrentSeedToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Random rand = new Random(seed);
+            for (int x = 0; x < universe.GetLength(1); x++)
+            {
+                for (int y = 0; y < universe.GetLength(0); y++)
+                {
+                    int num = rand.Next(0, 3);
 
+                    if (num == 0)
+                        universe[x, y] = true;
+                    else
+                        universe[x, y] = false;
+                }
+            }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations;
+            graphicsPanel1.Invalidate();
         }
 
+        // Randomize the universe based on the system clock
         private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Random rand = new Random();
+            for (int x = 0; x < universe.GetLength(1); x++)
+            {
+                for (int y = 0; y < universe.GetLength(0); y++)
+                {
+                    int num = rand.Next(0, 3);
 
+                    if (num == 0)
+                        universe[x, y] = true;
+                    else
+                        universe[x, y] = false;
+                }
+            }
+
+            generations = 0;
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations;
+            graphicsPanel1.Invalidate();
         }
 
         /* Settings Menu Functions - in progress
@@ -567,8 +644,8 @@ namespace Game_of_Life_Project
          * 
          * Options - done
          * 
-         * Reset - todo
-         * Reload - todo
+         * Reset - done
+         * Reload - done
          * 
          */
 
@@ -662,18 +739,32 @@ namespace Game_of_Life_Project
         // Affects Color of grid, grid_x10, cells, and background, and also affects grid size and milliseconds
         private void resetToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Reset the settings values
             Properties.Settings.Default.Reset();
 
+            // Update the variables with the new values
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             gridColor = Properties.Settings.Default.GridColor;
             cellColor = Properties.Settings.Default.CellColor;
             gridColor_x10 = Properties.Settings.Default.GridColor_x10;
 
+            seed = Properties.Settings.Default.RandSeed;
             milliseconds = Properties.Settings.Default.Milliseconds;
             xArr = Properties.Settings.Default.ArrLen_X;
             yArr = Properties.Settings.Default.ArrLen_Y;
             universe = new bool[xArr, yArr];
             scratchPad = new bool[xArr, yArr];
+
+            timer.Stop();
+
+            generations = 0;
+            livingCells = 0;
+
+            // Update the status strip
+            toolStripStatusLabelGenerations.Text = "Generations: " + 0;
+            toolStripStatusLabelInterval.Text = "Interval: " + milliseconds;
+            toolStripStatusLabelAlive.Text = "Alive: " + 0;
+            toolStripStatusLabelSeed.Text = "Seed: " + seed;
 
             graphicsPanel1.Invalidate();
         }
@@ -682,16 +773,32 @@ namespace Game_of_Life_Project
         // As with reset, affects Color of grid, grid_x10, cells, and background, and also affects grid size and milliseconds
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Reset the settings values
             Properties.Settings.Default.Reload();
 
+            // Update the variables with the new values
             graphicsPanel1.BackColor = Properties.Settings.Default.BackColor;
             gridColor = Properties.Settings.Default.GridColor;
             cellColor = Properties.Settings.Default.CellColor;
             gridColor_x10 = Properties.Settings.Default.GridColor_x10;
 
+            seed = Properties.Settings.Default.RandSeed;
             milliseconds = Properties.Settings.Default.Milliseconds;
             xArr = Properties.Settings.Default.ArrLen_X;
             yArr = Properties.Settings.Default.ArrLen_Y;
+            universe = new bool[xArr, yArr];
+            scratchPad = new bool[xArr, yArr];
+
+            timer.Stop();
+
+            generations = 0;
+            livingCells = 0;
+
+            // Update the status strip
+            toolStripStatusLabelGenerations.Text = "Generations: " + generations;
+            toolStripStatusLabelInterval.Text = "Interval: " + milliseconds;
+            toolStripStatusLabelAlive.Text = "Alive: " + livingCells;
+            toolStripStatusLabelSeed.Text = "Seed: " + seed;
 
             graphicsPanel1.Invalidate();
         }

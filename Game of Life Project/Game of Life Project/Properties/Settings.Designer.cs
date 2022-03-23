@@ -109,7 +109,7 @@ namespace Game_of_Life_Project.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2001")]
         public int RandSeed {
             get {
                 return ((int)(this["RandSeed"]));
