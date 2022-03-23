@@ -26,6 +26,9 @@ namespace Game_of_Life_Project
         // The random seed of the universe 
         static int seed;
 
+        // Used to run the application to a specific generation
+        int counter;
+
         // The universe array
         static bool[,] universe;
 
@@ -40,6 +43,9 @@ namespace Game_of_Life_Project
 
         // Used to toggle the neighbor count display on and off
         bool displayNeighborCount = true;
+
+        // Used to determine if application is running to a specific generation
+        bool CounterOn = false;
 
 
         // Drawing colors
@@ -102,6 +108,18 @@ namespace Game_of_Life_Project
         // Calculate the next generation of cells
         private void NextGeneration()
         {
+            // Tracks the number of generations for the application's run-to operation, and deactivates it when the requested
+            // number of generations is reached
+            if (counter <= 1 && CounterOn)
+            {
+                CounterOn = false;
+                timer.Enabled = false;
+            }
+            if (counter > 0 && CounterOn)
+            {
+                counter--;
+            }
+
             int livingNeighbors;
 
             for (int y = 0; y < universe.GetLength(1); y++)
@@ -140,6 +158,8 @@ namespace Game_of_Life_Project
 
             //Swap the arrays
             SwapArrays();
+
+
 
             //Repaint
             graphicsPanel1.Invalidate();
@@ -517,12 +537,12 @@ namespace Game_of_Life_Project
         }
 
 
-        /* Run Functions - in progress
+        /* Run Functions - finished
          * 
          * Play - done
          * Pause - done
          * Next - done
-         * To - todo
+         * To - done
          * 
          */
 
@@ -545,18 +565,36 @@ namespace Game_of_Life_Project
         }
 
 
-        // Advances the simulation to a specific generation - unifinished
+        // Advances the simulation to a specific generation
         private void toToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ToSpecificGeneration tsg = new ToSpecificGeneration(generations);
+
+            if(DialogResult.OK == tsg.ShowDialog())
+            {
+                int generationToRunTo = tsg.NumericUpDown_1;
+                RunToGeneration(generationToRunTo);
+            }
 
         }
 
+        // Triggers the run-to operation and sets the number of generations to be executed
+        private void RunToGeneration(int generationToRunTo)
+        {
+            if (generationToRunTo > generations)
+            {
+                CounterOn = true;
+                counter = generationToRunTo - generations;
+                timer.Enabled = true;
+            }
+        }
 
-        /* Randomize Functions - in progress
+
+        /* Randomize Functions - finished
          * 
-         * From Seed - todo
-         * From Current Seed - todo
-         * From Time - todo
+         * From Seed - done
+         * From Current Seed - done
+         * From Time - done
          * 
          */
 
@@ -569,26 +607,28 @@ namespace Game_of_Life_Project
             {
                 seed = csf.NumericUpDown_1;
                 toolStripStatusLabelSeed.Text = "Seed: " + seed;
-            }
 
-            Random rand = new Random(seed);
+                Random rand = new Random(seed);
 
-            for (int x = 0; x < universe.GetLength(1); x++)
-            {
-                for (int y = 0; y < universe.GetLength(0); y++)
+                for (int x = 0; x < universe.GetLength(1); x++)
                 {
-                    int num = rand.Next(0, 3);
+                    for (int y = 0; y < universe.GetLength(0); y++)
+                    {
+                        int num = rand.Next(0, 3);
 
-                    if (num == 0)
-                        universe[x, y] = true;
-                    else
-                        universe[x, y] = false;
+                        if (num == 0)
+                            universe[x, y] = true;
+                        else
+                            universe[x, y] = false;
+                    }
                 }
+
+                generations = 0;
+                toolStripStatusLabelGenerations.Text = "Generations: " + generations;
+
+                graphicsPanel1.Invalidate();
             }
 
-            generations = 0;
-            toolStripStatusLabelGenerations.Text = "Generations: " + generations;
-            graphicsPanel1.Invalidate();
         }
 
         // Randomize the universe based on the current seed
