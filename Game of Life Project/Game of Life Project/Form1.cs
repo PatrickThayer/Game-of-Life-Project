@@ -45,6 +45,9 @@ namespace Game_of_Life_Project
         // Used to toggle the neighbor count display on and off
         bool displayNeighborCount = true;
 
+        // Used to toggle the HUD
+        bool displayHUD = true;
+
         // Used to determine if application is running to a specific generation
         bool CounterOn = false;
 
@@ -358,6 +361,27 @@ namespace Game_of_Life_Project
                 }
             }
 
+            // Displays the HUD
+            if (displayHUD == true)
+            {
+                string boundaryType;
+                if (isToroidal)
+                    boundaryType = "Toroidal";
+                else
+                    boundaryType = "Finite";
+
+                // Font and formatting for the HUD
+                Font font = new Font("Arial", 13f);
+                StringFormat stringFormat = new StringFormat();
+                stringFormat.Alignment = StringAlignment.Near;
+                stringFormat.LineAlignment = StringAlignment.Far;
+
+                //Draws the HUD to the display
+                e.Graphics.DrawString($"Generations: {generations}\nCell Counts: {livingCells}\n" +
+                                        $"Boundary Type: {boundaryType}\nUniverse Size: {{ {xArr}, {yArr} }}",
+                                        font, Brushes.Red, graphicsPanel1.ClientRectangle, stringFormat);
+            }
+
             // Cleaning up pens and brushes
             gridPen.Dispose();
             cellBrush.Dispose();
@@ -433,12 +457,12 @@ namespace Game_of_Life_Project
             nextToolStripMenuItem_Click(sender, e);
         }
 
-        /* File Menu Functions - in progress
+        /* File Menu Functions - finished
          * 
          * New - done
-         * Open - todo
+         * Open - done
          * Import - Not required for implementation
-         * Save - todo
+         * Save - done
          * Exit -done
          */
 
@@ -522,7 +546,7 @@ namespace Game_of_Life_Project
 
         }
 
-        //Saves current grid as a cell file - unfinished
+        //Saves current grid as a cell file
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog dlg = new SaveFileDialog();
@@ -560,9 +584,9 @@ namespace Game_of_Life_Project
             this.Close();
         }
 
-        /* View Menu Functions - in progress
+        /* View Menu Functions - finished
          * 
-         * HUD - todo
+         * HUD - done
          * NeighborCount - done
          * Grid - done
          * 
@@ -570,10 +594,15 @@ namespace Game_of_Life_Project
          * Finite - done
          */
 
-        //Toggles HUD - unfinished
+        //Toggles HUD
         private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (displayHUD)
+                displayHUD = false;
+            else
+                displayHUD = true;
 
+            graphicsPanel1.Invalidate();
         }
 
         //Toggles NeighborCount numbers
